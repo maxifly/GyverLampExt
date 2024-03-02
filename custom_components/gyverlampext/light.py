@@ -88,9 +88,10 @@ class GyverLamp(LightEntity):
     _effects_by_id = dict()
     _use_random_effect = None
     _random_effect_ids = None
+
     def __init__(self, config: dict, unique_id=None):
         self._attr_effect_list = config.get(CONF_EFFECTS, EFFECTS)
-        self._attr_name = config.get(CONF_NAME, "Gyver Lamp")
+        self._attr_name = config.get(CONF_NAME, "Gyver Lamp Ex")
         self._attr_should_poll = True
         self._attr_supported_color_modes = {ColorMode.HS}
         self._attr_supported_features = LightEntityFeature.EFFECT
@@ -104,6 +105,8 @@ class GyverLamp(LightEntity):
 
         self.host = config[CONF_HOST]
 
+        self.update_config(config)
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.settimeout(5)
 
@@ -115,13 +118,13 @@ class GyverLamp(LightEntity):
         _LOGGER.debug(f"{self.host} | {message}")
 
     def update_config(self, config: dict):
-        self._host = config[CONF_HOST]
+        self.host = config[CONF_HOST]
         self._use_random_effect = config.get(CONF_USE_RANDOM_EFFECT, False)
 
-        effects_list = config.get(CONF_EFFECTS, EFFECTS)
+        self._attr_effect_list = config.get(CONF_EFFECTS, EFFECTS)
         effects_map = config.get(CONF_EFFECTS_MAP, {})
 
-        self._effects_by_id = {i: effects_list[i] for i in range(0, len(effects_list))}
+        self._effects_by_id = {i: self._attr_effect_list[i] for i in range(0, len(self._attr_effect_list))}
 
         random_ids = set()
         if config.get(CONF_INCLUDE_ALL_EFFECT_TO_RANDOM, False):
@@ -147,6 +150,8 @@ class GyverLamp(LightEntity):
 
         self.debug("map " + str(self._effects_by_name))
         self.debug("_random_effect_ids " + str(self._random_effect_ids))
+
+        self._attr_effect_list = list(self._effects_by_id.values())
 
         if self.hass:
             self._async_write_ha_state()
@@ -201,7 +206,7 @@ class GyverLamp(LightEntity):
             self.debug(f"UPDATE {data}")
             # bri eff spd sca pow
             i = int(data[1])
-            self._effect = self._effects_by_id.get(i, None)
+            self._attr_effect = self._effects_by_id.get(i, None)
             self._attr_brightness = int(data[2])
             self._attr_hs_color = (
                 float(data[4]) / 100.0 * 360.0,

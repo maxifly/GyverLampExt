@@ -28,7 +28,6 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         effects = ",".join(EFFECTS)
         return self.async_show_form(
             step_id="user",
-            step_id='user',
             data_schema=vol.Schema({
                 vol.Required(CONF_HOST): cv.string,
                 vol.Optional(CONF_USE_RANDOM_EFFECT): cv.boolean,
@@ -65,7 +64,7 @@ class OptionsFlowHandler(OptionsFlow):
                 vol.Optional(CONF_EFFECTS, default=effects): cv.string,
                 vol.Optional(CONF_RANDOM_EFFECTS, default=random_effects): cv.string
                 }
-            ),
+            )
         )
 
     async def async_step_user(self, user_input: dict = None):

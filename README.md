@@ -9,15 +9,22 @@
 [3]: https://alexgyver.ru/about_gyver/
 
 Компонент работает со стандартной прошивкой лампы. Текущее состояние лампы **опрашивается раз в 30 секунд**, поэтому, после старта Home Assistant, она будет пол минуты выключена.
+Для работы с прошивкой от [gunner47](https://community.alexgyver.ru/threads/wifi-lampa-budilnik-obsuzhdenie-proshivki-ot-gunner47.2418/page-72#post-33652)
+необходимо буте в настройках поменять список эффектов или ввести только понравившиеся эффекты, указав их названия и индексы
 
 Поддерживается:
 
 - включение/выключение лампы
 - установка яркости
 - установка эффекта из списка
+- включение случайного элемента из списка в момент включения лампы
+- использование только части эффектов прошитых в контроллере лампы
 - установка скорости и масштаба через тон и насыщенность (круг с набором цветов в интерфейсе HA)
    - **насыщенность** это **скорость**, ближе к центру - быстрее 
    - **цвет** это **масштаб**, но в некоторых эффектах цвет это цвет :) 
+
+Компонент создан на основе форка проекта https://github.com/AlexxIT/GyverLamp
+
 
 ![](screen.png)
 
@@ -25,27 +32,25 @@
 
 **Способ 1.** [HACS](https://hacs.xyz/)
 
-> HACS > Интеграции > 3 точки (правый верхний угол) > Пользовательские репозитории > URL: `AlexxIT/GyverLamp`, Категория: Интеграция > Добавить > подождать > GyverLamp > Установить
+> HACS > Интеграции > 3 точки (правый верхний угол) > Пользовательские репозитории > URL: `maxifly/GyverLampExt`, Категория: Интеграция > Добавить > подождать > GyverLampExt > Установить
 
-**Способ 2.** Вручную скопируйте папку `gyverlamp` из [latest release](https://github.com/AlexxIT/GyverLamp/releases/latest) в директорию `/config/custom_components`.
+**Способ 2.** Вручную скопируйте папку `gyverlampext` из [latest release](https://github.com/maxifly/GyverLampExt/releases/latest) в директорию `/config/custom_components`.
 
 ## Настройка
 
-[![Home Assistant компонент для Лампы Гайвера на стандартной прошивке](https://img.youtube.com/vi/riYsv5k_EdY/mqdefault.jpg)](https://www.youtube.com/watch?v=riYsv5k_EdY)
-
 **Способ 1.** GUI
 
-> Настройки > Интеграции > Добавить интеграцию > **GyverLamp**
+> Настройки > Интеграции > Добавить интеграцию > **GyverLampExt**
 
 Если интеграции нет в списке - очистите кэш браузера.
 
 **Способ 2.** YAML
 
 ```yaml
-light gyverlamp:
-- platform: gyverlamp
+light:
+- platform: gyverlampext
   host: 192.168.1.123
-  name: Лампа Гайвера
+  name: Gyver lamp test
   use_random_effect: true
   include_all_effect_to_random: true
   effects:

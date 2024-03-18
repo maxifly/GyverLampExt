@@ -94,6 +94,7 @@ class GyverLamp(LightEntity):
         self._attr_name = config.get(CONF_NAME, "Gyver Lamp Ex")
         self._attr_should_poll = True
         self._attr_supported_color_modes = {ColorMode.HS}
+        self._attr_color_mode = ColorMode.HS
         self._attr_supported_features = LightEntityFeature.EFFECT
         self._attr_unique_id = unique_id
 
@@ -102,6 +103,8 @@ class GyverLamp(LightEntity):
             manufacturer="@AlexGyver",
             model="GyverLamp",
         )
+
+        self._unavailable_counter = 0
 
         self.host = config[CONF_HOST]
 
@@ -214,7 +217,15 @@ class GyverLamp(LightEntity):
             )
             self._attr_is_on = data[5] == "1"
             self._attr_available = True
+            self._unavailable_counter = 0
 
         except Exception as e:
             self.debug(f"Can't update: {e}")
-            self._attr_available = False
+
+            if self._unavailable_counter >= 3:
+                self._attr_available = False
+                self.debug("Lamp unavailable")
+            else:
+                self._unavailable_counter = self._unavailable_counter + 1
+
+
